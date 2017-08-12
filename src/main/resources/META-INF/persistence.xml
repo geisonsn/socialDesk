@@ -6,7 +6,12 @@
 	<!--
 	-->
 	<persistence-unit name="socialDesk-ds" transaction-type="RESOURCE_LOCAL">
-		<non-jta-data-source>java:jboss/datasources/helpdesk-ds</non-jta-data-source>
+	
+		<!-- Configuração localhost -->
+		<!-- <non-jta-data-source>java:jboss/datasources/helpdesk-ds</non-jta-data-source> -->
+		
+		<!-- Configuração Openshift -->
+		<jta-data-source>java:jboss/datasources/MySQLDS</jta-data-source>
 
 		<class>br.edu.ifam.socialdesk.domain.Bookmark</class>
 		<class>br.edu.ifam.socialdesk.domain.Usuario</class>
@@ -25,7 +30,7 @@
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="false" />
 			<property name="hibernate.hbm2ddl.auto" value="update" /> 
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" /> -->
 		</properties>
 	</persistence-unit>
 
