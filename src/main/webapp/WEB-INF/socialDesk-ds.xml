@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema">
+        <datasource jndi-name="java:jboss/datasources/helpdesk-ds"
+                pool-name="HelpdeskPool">
+                <connection-url>jdbc:mysql://localhost:3306/helpdesk</connection-url>
+                <driver-class>com.mysql.jdbc.Driver</driver-class>
+                <driver>mysql-connector-java-5.1.6.jar</driver>
+                <pool>
+                        <min-pool-size>1</min-pool-size>
+                        <max-pool-size>30</max-pool-size>
+                </pool>
+                <security>
+                        <user-name>root</user-name>
+                        <password>root</password>
+                </security>
+                <statement>
+                        <prepared-statement-cache-size>100</prepared-statement-cache-size>
+                        <share-prepared-statements>true</share-prepared-statements>
+                </statement>
+        </datasource>
+</datasources>
