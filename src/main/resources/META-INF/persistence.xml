@@ -8,10 +8,12 @@
 	<persistence-unit name="socialDesk-ds" transaction-type="RESOURCE_LOCAL">
 	
 		<!-- Configuração localhost -->
-		<!-- <non-jta-data-source>java:jboss/datasources/helpdesk-ds</non-jta-data-source> -->
+		<non-jta-data-source>java:jboss/datasources/helpdesk-ds</non-jta-data-source>
 		
-		<!-- Configuração Openshift -->
-		<jta-data-source>java:jboss/datasources/MySQLDS</jta-data-source>
+		<!-- 
+			Configuração Openshift: ao realizar deploy descomentar a linha abaixo e renomear o arquivo socialDesk-ds.xml para socialDesk-ds.xml.bkp  
+		-->
+		<!-- <jta-data-source>java:jboss/datasources/MySQLDS</jta-data-source> -->
 
 		<class>br.edu.ifam.socialdesk.domain.Bookmark</class>
 		<class>br.edu.ifam.socialdesk.domain.Usuario</class>
