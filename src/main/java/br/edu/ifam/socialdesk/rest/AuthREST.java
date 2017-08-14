@@ -29,8 +29,8 @@ public class AuthREST {
 	@Produces("application/json")
 	public Principal login(CredentialsBody body) {
 		Credentials credentials = Beans.getReference(Credentials.class);
-		credentials.setUsername(body.username);
-		credentials.setPassword(body.password);
+		credentials.setUsername(body.email);
+		credentials.setPassword(body.senha);
 
 		securityContext.login();
 		return securityContext.getUser();
@@ -48,10 +48,10 @@ public class AuthREST {
 
 		@NotNull(message = "{required.field}")
 		@Size(min = 1, message = "{required.field}")
-		public String username;
+		public String email;
 
 		@NotNull(message = "{required.field}")
 		@Size(min = 1, message = "{required.field}")
-		public String password;
+		public String senha;
 	}
 }

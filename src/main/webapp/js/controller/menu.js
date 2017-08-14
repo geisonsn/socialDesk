@@ -1,7 +1,7 @@
 $(function() {
 	$("#menu").load("menu.html", function() {
 		if (App.auth.isLoggedIn()) {
-			$("#username").html(App.auth.getLoggedInUser().name);
+			$("#username").html(App.auth.getLoggedInUser().email);
 
 			$("#logout").click(function(event) {
 				event.preventDefault();

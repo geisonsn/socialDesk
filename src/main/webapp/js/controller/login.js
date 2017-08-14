@@ -11,8 +11,8 @@ $(function() {
 		$("[id$='-message']").hide();
 
 		var credentials = {
-			'username' : $("#username").val().trim(),
-			'password' : $("#password").val().trim()
+			'email' : $("#username").val().trim(),
+			'senha' : $("#password").val().trim()
 		};
 
 		AuthProxy.login(credentials).done(loginOk).fail(loginFail);

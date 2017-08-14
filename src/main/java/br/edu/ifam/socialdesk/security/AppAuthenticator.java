@@ -12,7 +12,7 @@ import br.gov.frameworkdemoiselle.security.TokenAuthenticator;
 import br.gov.frameworkdemoiselle.util.Beans;
 
 public class AppAuthenticator extends TokenAuthenticator {
-	
+
 	@Inject
 	private UsuarioBC usuarioBC;
 
@@ -25,32 +25,47 @@ public class AppAuthenticator extends TokenAuthenticator {
 		String password = credentials.getPassword();
 
 		final Usuario usuario = usuarioBC.login(username, password);
-		
+
 		if (usuario == null) {
 			throw new InvalidCredentialsException();
 		}
-		
+
 		return new Principal() {
-			@Override
-			public String getName() {
+			@SuppressWarnings("unused")
+			public String getEmail() {
 				return usuario.getEmail();
 			}
+
+			@SuppressWarnings("unused")
+			public String getNome() {
+				return usuario.getNomeUsuario();
+			}
+
+			@SuppressWarnings("unused")
+			public Long getId() {
+				return usuario.getId();
+			}
+
+			@Override
+			public String getName() {
+				return null;
+			}
 		};
-		
-//		Principal user = null;
-//		if (credentials.getPassword().equals("secret")) {
-//			user = new Principal() {
-//
-//				@Override
-//				public String getName() {
-//					return username;
-//				}
-//			};
-//
-//		} else {
-//			throw new InvalidCredentialsException();
-//		}
-//
-//		return user;
+
+		// Principal user = null;
+		// if (credentials.getPassword().equals("secret")) {
+		// user = new Principal() {
+		//
+		// @Override
+		// public String getName() {
+		// return username;
+		// }
+		// };
+		//
+		// } else {
+		// throw new InvalidCredentialsException();
+		// }
+		//
+		// return user;
 	}
 }
