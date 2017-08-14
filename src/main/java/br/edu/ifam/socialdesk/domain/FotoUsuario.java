@@ -12,6 +12,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.codec.binary.Base64;
+
 @Entity
 @Table(name = "FOTO_USUARIO")
 public class FotoUsuario implements Serializable {
@@ -33,7 +35,7 @@ public class FotoUsuario implements Serializable {
 
 	@Lob
 	@Column(name = "FOTO")
-	private String foto;
+	private byte[] foto;
 
 	public Long getId() {
 		return id;
@@ -51,11 +53,19 @@ public class FotoUsuario implements Serializable {
 		this.usuario = usuario;
 	}
 
-	public String getFoto() {
+	public byte[] getFoto() {
 		return foto;
 	}
 
-	public void setFoto(String foto) {
+	public String getFotoBase64() {
+		if (foto != null) {
+			byte[] encodeBase64 = Base64.encodeBase64(foto);
+			return new String(encodeBase64);
+		}
+		return null;
+	}
+
+	public void setFoto(byte[] foto) {
 		this.foto = foto;
 	}
 
