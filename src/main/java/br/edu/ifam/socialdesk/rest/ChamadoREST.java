@@ -12,7 +12,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -20,10 +19,11 @@ import javax.ws.rs.core.UriInfo;
 import br.edu.ifam.socialdesk.business.ChamadoBC;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.gov.frameworkdemoiselle.BadRequestException;
 import br.gov.frameworkdemoiselle.NotFoundException;
 import br.gov.frameworkdemoiselle.transaction.Transactional;
-import br.gov.frameworkdemoiselle.util.Strings;
 import br.gov.frameworkdemoiselle.util.ValidatePayload;
 
 @Path("/chamado")
@@ -34,16 +34,8 @@ public class ChamadoREST {
 
 	@GET
 	@Produces("application/json")
-	public List<Chamado> find(@QueryParam("q") String query) throws Exception {
-		List<Chamado> result;
-
-		if (Strings.isEmpty(query)) {
-			result = bc.findAll();
-		} else {
-			result = bc.find(query);
-		}
-
-		return result;
+	public List<ChamadoListaDTO> find() throws Exception {
+		return this.bc.find();
 	}
 
 	@GET
@@ -64,8 +56,8 @@ public class ChamadoREST {
 	@ValidatePayload
 	@Produces("application/json")
 	@Consumes("application/json")
-	public Response save(Chamado chamado, @Context UriInfo uriInfo) throws Exception {
-		Long id = bc.save(chamado);
+	public Response save(ChamadoDTO form, @Context UriInfo uriInfo) throws Exception {
+		Long id = bc.save(form.getChamado());
 		URI location = uriInfo.getRequestUriBuilder().path(id.toString()).build();
 
 		return Response.created(location).entity(id).build();
@@ -130,8 +122,8 @@ public class ChamadoREST {
 	@GET
 	@Produces("application/json")
 	@Path("listPorCategoria/{idCategoria}")
-	public List<Chamado> listPorCategoria(@PathParam("idCategoria") Long idCategoria) throws Exception {
-		List<Chamado> result;
+	public List<ChamadoListaDTO> listPorCategoria(@PathParam("idCategoria") Long idCategoria) throws Exception {
+		List<ChamadoListaDTO> result;
 
 		result = bc.listPorCategoria(idCategoria);
 
@@ -141,8 +133,8 @@ public class ChamadoREST {
 	@GET
 	@Produces("application/json")
 	@Path("listPorUsuario/{idUsuario}")
-	public List<Chamado> listPorUsuario(@PathParam("idUsuario") Long idUsuario) throws Exception {
-		List<Chamado> result;
+	public List<ChamadoListaDTO> listPorUsuario(@PathParam("idUsuario") Long idUsuario) throws Exception {
+		List<ChamadoListaDTO> result;
 		result = bc.listPorUsuario(idUsuario);
 		return result;
 	}

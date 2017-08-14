@@ -1,5 +1,6 @@
 package br.edu.ifam.socialdesk.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import br.edu.ifam.socialdesk.constant.Constants;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
 import br.edu.ifam.socialdesk.domain.Status;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.edu.ifam.socialdesk.exception.BusinessException;
 import br.edu.ifam.socialdesk.persistence.ChamadoDAO;
 import br.gov.frameworkdemoiselle.stereotype.BusinessController;
@@ -32,13 +34,31 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		return getDelegate().find(query);
 	}
 
+	public List<ChamadoListaDTO> find() {
+		List<ChamadoListaDTO> result = new ArrayList<>();
+		List<Chamado> listChamado = this.getDelegate().findAll();
+		for (Chamado chamado : listChamado) {
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
+					"img/apple.jpg"));
+		}
+
+		return result;
+	}
+
 	/**
 	 * Listar chamados por categoria
 	 * 
 	 * @param idCategoria
 	 */
-	public List<Chamado> listPorCategoria(Long idCategoria) {
-		return getDelegate().listPorCategoria(idCategoria);
+	public List<ChamadoListaDTO> listPorCategoria(Long idCategoria) {
+		List<ChamadoListaDTO> result = new ArrayList<>();
+		List<Chamado> listPorCategoria = getDelegate().listPorCategoria(idCategoria);
+		for (Chamado chamado : listPorCategoria) {
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
+					"img/apple.jpg"));
+		}
+
+		return result;
 	}
 
 	/**
@@ -46,8 +66,16 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	 * 
 	 * @param idUsuario
 	 */
-	public List<Chamado> listPorUsuario(Long idUsuario) {
-		return getDelegate().listPorUsuario(idUsuario);
+	public List<ChamadoListaDTO> listPorUsuario(Long idUsuario) {
+		List<ChamadoListaDTO> result = new ArrayList<>();
+		List<Chamado> listPorCategoria = getDelegate().listPorUsuario(idUsuario);
+		for (Chamado chamado : listPorCategoria) {
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
+					"img/apple.jpg"));
+		}
+
+		return result;
+
 	}
 
 	/**
