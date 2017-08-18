@@ -1,6 +1,7 @@
 package br.edu.ifam.socialdesk.business;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,7 +25,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 
 	@Inject
 	private ArquivoChamadoBC arquivoChamadoBC;
-
+	
 	@Inject
 	private StatusBC statusBC;
 
@@ -38,8 +39,8 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listChamado = this.getDelegate().findAll();
 		for (Chamado chamado : listChamado) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
-					"img/apple.jpg"));
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), this.arquivoChamadoBC.findPorChamado(chamado.getId())));
+			//result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), "img/apple.jpg"));
 		}
 
 		return result;
@@ -54,8 +55,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listPorCategoria = getDelegate().listPorCategoria(idCategoria);
 		for (Chamado chamado : listPorCategoria) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
-					"img/apple.jpg"));
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), "img/apple.jpg"));
 		}
 
 		return result;
@@ -70,8 +70,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listPorCategoria = getDelegate().listPorUsuario(idUsuario);
 		for (Chamado chamado : listPorCategoria) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
-					"img/apple.jpg"));
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), "img/apple.jpg"));
 		}
 
 		return result;
@@ -99,7 +98,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 			throw new BusinessException("Não é possível excluir o chamado por possuir comentarios.");
 		}
 
-		arquivoChamadoBC.deletePorChamado(idChamado);
+		//arquivoChamadoBC.deletePorChamado(idChamado);
 
 		this.delete(idChamado);
 	}
@@ -135,6 +134,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		if (chamado.getId() == null) {
 			Status status = statusBC.getPorSigla(Constants.STATUS_ABERTO);
 			chamado.setStatus(status);
+			chamado.setDataCriacao(new Date());
 			id = getDelegate().insert(chamado).getId();
 		} else {
 			id = getDelegate().update(chamado).getId();
@@ -156,14 +156,14 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	}
 
 	/**
-	 * Atualiza a quantidade de like de um Chamado
+	 * Atualiza a quantidade de curtidas de um Chamado
 	 * 
 	 * @param chamado
 	 */
 	public void updateQtdeLike(Chamado chamado) {
 		Chamado chamadoBanco = this.load(chamado.getId());
-		Long qtdeLikeAtualizada = chamadoBanco.getQuantidadeLike() + 1;
-		chamadoBanco.setQuantidadeLike(qtdeLikeAtualizada);
+		Long qtdeLikeAtualizada = chamadoBanco.getQuantidadeCurtida() + 1;
+		chamadoBanco.setQuantidadeCurtida(qtdeLikeAtualizada);
 		getDelegate().update(chamadoBanco);
 
 	}

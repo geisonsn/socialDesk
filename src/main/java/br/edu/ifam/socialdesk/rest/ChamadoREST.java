@@ -16,7 +16,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.jboss.resteasy.util.Base64;
+
+import br.edu.ifam.socialdesk.business.ArquivoChamadoBC;
 import br.edu.ifam.socialdesk.business.ChamadoBC;
+import br.edu.ifam.socialdesk.domain.ArquivoChamado;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO;
@@ -31,6 +35,9 @@ public class ChamadoREST {
 
 	@Inject
 	private ChamadoBC bc;
+
+	@Inject
+	private ArquivoChamadoBC arquivoChamadoBC;
 
 	@GET
 	@Produces("application/json")
@@ -58,6 +65,16 @@ public class ChamadoREST {
 	@Consumes("application/json")
 	public Response save(ChamadoDTO form, @Context UriInfo uriInfo) throws Exception {
 		Long id = bc.save(form.getChamado());
+
+		Chamado chamado = bc.load(id);
+
+		if (form.getFoto() != null) {
+			ArquivoChamado arquivo = new ArquivoChamado();
+			arquivo.setChamado(chamado);
+			arquivo.setFoto(Base64.decode(form.getFoto()));
+			arquivoChamadoBC.insert(arquivo);
+		}
+
 		URI location = uriInfo.getRequestUriBuilder().path(id.toString()).build();
 
 		return Response.created(location).entity(id).build();

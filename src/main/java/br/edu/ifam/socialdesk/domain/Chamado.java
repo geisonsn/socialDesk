@@ -45,8 +45,8 @@ public class Chamado implements Serializable {
 	@JoinColumn(name = "ID_STATUS")
 	private Status status;
 
-	@Column(name = "QUANTIDADE_LIKE")
-	private Long quantidadeLike;
+	@Column(name = "QUANTIDADE_CURTIDA")
+	private Long quantidadeCurtida;
 
 	public Long getId() {
 		return id;
@@ -96,12 +96,11 @@ public class Chamado implements Serializable {
 		this.dataCriacao = dataCriacao;
 	}
 
-	public Long getQuantidadeLike() {
-		return quantidadeLike;
+	public Long getQuantidadeCurtida() {
+		return quantidadeCurtida;
 	}
 
-	public void setQuantidadeLike(Long quantidadeLike) {
-		this.quantidadeLike = quantidadeLike;
+	public void setQuantidadeCurtida(Long quantidadeCurtida) {
+		this.quantidadeCurtida = quantidadeCurtida;
 	}
-
 }

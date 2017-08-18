@@ -17,6 +17,13 @@ public class ArquivoChamadoBC extends DelegateCrud<ArquivoChamado, Long, Arquivo
 		return getDelegate().find(query);
 	}
 
+	public List<ArquivoChamado> findPorChamado(Long idChamado) {
+
+		List<ArquivoChamado> arquivos = getDelegate().findPorChamado(idChamado);
+
+		return arquivos;
+	}
+	
 	public void deletePorChamado(Long idChamado) {
 
 		List<ArquivoChamado> arquivos = getDelegate().findPorChamado(idChamado);

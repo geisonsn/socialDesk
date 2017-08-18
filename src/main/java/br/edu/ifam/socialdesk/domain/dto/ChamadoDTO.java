@@ -2,6 +2,8 @@ package br.edu.ifam.socialdesk.domain.dto;
 
 import javax.validation.constraints.NotNull;
 
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+
 import br.edu.ifam.socialdesk.domain.Categoria;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Usuario;
@@ -16,7 +18,7 @@ public class ChamadoDTO {
 	@NotNull
 	private Long idCategoria;
 
-	private byte[] foto;
+	private String foto;
 
 	public String getDescricao() {
 		return descricao;
@@ -42,11 +44,11 @@ public class ChamadoDTO {
 		this.idCategoria = idCategoria;
 	}
 
-	public byte[] getFoto() {
+	public String getFoto() {
 		return foto;
 	}
 
-	public void setFoto(byte[] foto) {
+	public void setFoto(String foto) {
 		this.foto = foto;
 	}
 
