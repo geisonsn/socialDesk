@@ -1,7 +1,0 @@
-!SESSION 
-
-!ENTRY org.jboss.ide.eclipse.as.core 1 16842760 2017-08-17 16:50:19.543
-!MESSAGE Server Starting
-
-!ENTRY org.jboss.ide.eclipse.as.wtp.core 4 16973825 2017-08-17 16:53:40.992
-!MESSAGE Server processes have terminated prematurely. Please check your server logs for more details. 
