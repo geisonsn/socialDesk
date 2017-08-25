@@ -22,6 +22,11 @@ public class Comentario implements Serializable {
 
 	}
 
+	public Comentario(Long id, String descricao) {
+		this.id = id;
+		this.descricao = descricao;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID")

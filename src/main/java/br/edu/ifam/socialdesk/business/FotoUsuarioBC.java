@@ -15,4 +15,9 @@ public class FotoUsuarioBC extends DelegateCrud<FotoUsuario, Long, FotoUsuarioDA
 	public List<FotoUsuario> find(String query) {
 		return getDelegate().find(query);
 	}
+	
+	
+	public FotoUsuario getByUsuario(Long idUsuario) {
+		return getDelegate().getByUsuario(idUsuario);
+	}
 }

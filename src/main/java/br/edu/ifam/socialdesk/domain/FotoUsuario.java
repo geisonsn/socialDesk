@@ -1,5 +1,6 @@
 package br.edu.ifam.socialdesk.domain;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -9,10 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.codec.binary.Base64;
+import br.edu.ifam.socialdesk.util.UtilDomain;
 
 @Entity
 @Table(name = "FOTO_USUARIO")
@@ -29,7 +30,7 @@ public class FotoUsuario implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name = "ID_USUARIO")
 	private Usuario usuario;
 
@@ -57,10 +58,10 @@ public class FotoUsuario implements Serializable {
 		return foto;
 	}
 
-	public String getFotoBase64() {
+	public String getFotoBase64() throws IOException {
 		if (foto != null) {
-			byte[] encodeBase64 = Base64.encodeBase64(foto);
-			return new String(encodeBase64);
+			String imagemReduzida = UtilDomain.redimensionaImagem(foto, 100, 100, "jpg");
+			return imagemReduzida;
 		}
 		return null;
 	}

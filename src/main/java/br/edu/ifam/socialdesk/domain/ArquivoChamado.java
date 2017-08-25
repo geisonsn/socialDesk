@@ -1,5 +1,6 @@
 package br.edu.ifam.socialdesk.domain;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -13,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.codec.binary.Base64;
+
+import br.edu.ifam.socialdesk.util.ImagemUtil;
+import br.edu.ifam.socialdesk.util.UtilDomain;
 
 @Entity
 @Table(name = "ARQUIVO_CHAMADO")
@@ -65,13 +69,22 @@ public class ArquivoChamado implements Serializable {
 		this.foto = foto;
 	}
 
-	public String getFotoBase64() {
+//	public String getFotoBase64() {
+//		if (foto != null) {
+//			byte[] encodeBase64 = Base64.encodeBase64(foto);
+//			return new String(encodeBase64);
+//		}
+//		return null;
+//	}
+	
+	public String getFotoBase64() throws IOException{
 		if (foto != null) {
-			byte[] encodeBase64 = Base64.encodeBase64(foto);
-			return new String(encodeBase64);
+			String imagemReduzida = UtilDomain.redimensionaImagem(foto, 100, 100, "jpg");
+			return imagemReduzida;
 		}
 		return null;
 	}
+	
 
 	public String getVideo() {
 		return video;

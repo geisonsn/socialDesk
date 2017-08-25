@@ -1,5 +1,6 @@
 package br.edu.ifam.socialdesk.business;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,8 +8,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import br.edu.ifam.socialdesk.constant.Constants;
+import br.edu.ifam.socialdesk.domain.ArquivoChamado;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
+import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Status;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.edu.ifam.socialdesk.exception.BusinessException;
@@ -27,6 +30,9 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	private ArquivoChamadoBC arquivoChamadoBC;
 	
 	@Inject
+	private FotoUsuarioBC fotoUsuarioBC;
+
+	@Inject
 	private StatusBC statusBC;
 
 	private static final long serialVersionUID = 1L;
@@ -35,12 +41,21 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		return getDelegate().find(query);
 	}
 
-	public List<ChamadoListaDTO> find() {
+	public List<ChamadoListaDTO> find() throws IOException {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listChamado = this.getDelegate().findAll();
 		for (Chamado chamado : listChamado) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), this.arquivoChamadoBC.findPorChamado(chamado.getId())));
-			//result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), "img/apple.jpg"));
+			 Long nrComentarios = this.comentarioBC.contarComentarios(chamado.getId());
+			 
+			 List<ArquivoChamado> arquivos = this.arquivoChamadoBC.findPorChamado(chamado.getId());
+			 List<Comentario> comentarios = this.comentarioBC.listarComentarios(chamado.getId());
+			 
+			 FotoUsuario foto = this.fotoUsuarioBC.getByUsuario(chamado.getUsuario().getId());
+			 
+			result.add(new ChamadoListaDTO(chamado,nrComentarios,arquivos,comentarios,foto));
+		/*	result.add(new ChamadoListaDTO(chamado,
+				 	this.comentarioBC.contarComentarios(chamado.getId()),
+				 	"img/apple.jpg"));*/
 		}
 
 		return result;
@@ -55,7 +70,8 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listPorCategoria = getDelegate().listPorCategoria(idCategoria);
 		for (Chamado chamado : listPorCategoria) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), "img/apple.jpg"));
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
+					"img/apple.jpg"));
 		}
 
 		return result;
@@ -70,7 +86,8 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listPorCategoria = getDelegate().listPorUsuario(idUsuario);
 		for (Chamado chamado : listPorCategoria) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()), "img/apple.jpg"));
+			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
+					"img/apple.jpg"));
 		}
 
 		return result;
@@ -98,7 +115,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 			throw new BusinessException("Não é possível excluir o chamado por possuir comentarios.");
 		}
 
-		//arquivoChamadoBC.deletePorChamado(idChamado);
+		// arquivoChamadoBC.deletePorChamado(idChamado);
 
 		this.delete(idChamado);
 	}

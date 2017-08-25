@@ -1,10 +1,19 @@
 package br.edu.ifam.socialdesk.util;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.persistence.Id;
+
+import org.apache.commons.codec.binary.Base64;
 
 import br.gov.frameworkdemoiselle.util.Reflections;
 
@@ -153,6 +162,41 @@ public class UtilDomain {
 		}
 	}
 
+	
+	public static String redimensionaImagem(byte[] data, int width, int height, String extensao) throws IOException {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		InputStream in = new ByteArrayInputStream(data);
+
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		img.createGraphics().drawImage(ImageIO.read(in).getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
+		ImageIO.write(img, extensao, baos);
+
+		baos.flush();
+		byte[] imageInByte = baos.toByteArray();
+		baos.close();
+
+		byte[] encodeBase64 = Base64.encodeBase64(imageInByte);
+		String stringBase64 = new String(encodeBase64);
+
+		return stringBase64;
+	}
+
+	public static byte[] redimensionaImagemByte(byte[] data, int width, int height, String extensao) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		InputStream in = new ByteArrayInputStream(data);
+
+		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		img.createGraphics().drawImage(ImageIO.read(in).getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
+
+		ImageIO.write(img, extensao, baos);
+
+		baos.flush();
+		byte[] imageEmByte = baos.toByteArray();
+		baos.close();
+
+		return imageEmByte;
+	}
 	/*
 	 * public static <S, D> List<D> mapList(List<S> lista, Class<D>
 	 * destinationType, PropertyMap<S, D> propertyMap) {
