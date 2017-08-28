@@ -26,6 +26,14 @@ public class Comentario implements Serializable {
 		this.id = id;
 		this.descricao = descricao;
 	}
+	
+	public Comentario(Long id, String descricao, String nomeUsuario) {
+		this.id = id;
+		this.descricao = descricao;
+		Usuario usuario = new Usuario();
+		usuario.setNomeUsuario(nomeUsuario);
+		this.usuario = usuario;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

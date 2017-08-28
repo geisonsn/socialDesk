@@ -54,4 +54,10 @@ public class ComentarioBC extends DelegateCrud<Comentario, Long, ComentarioDAO> 
 	public List<Comentario> listarComentarios(Long idChamado) {
 		return getDelegate().listarComentarios(idChamado);
 	}
+	
+	public List<Comentario> listarComentariosUsuario(Long idChamado) {
+		return getDelegate().listarComentariosUsuario(idChamado);
+	}
+	
+	
 }

@@ -1,6 +1,7 @@
 package br.edu.ifam.socialdesk.rest;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -49,6 +50,20 @@ public class ChamadoREST {
 	@Path("{id}")
 	@Produces("application/json")
 	public Chamado load(@PathParam("id") Long id) throws Exception {
+		Chamado result = bc.load(id);
+
+		if (result == null) {
+			throw new NotFoundException();
+		}
+
+		return result;
+	}
+	
+	@GET
+	@Path("comComentarios/{id}")
+	@Produces("application/json")
+	public Chamado loadComComentarios(@PathParam("id") Long id) throws Exception {
+		//TODO Retornar dto de Chamado com listComentarios
 		Chamado result = bc.load(id);
 
 		if (result == null) {
@@ -172,6 +187,7 @@ public class ChamadoREST {
 	@Produces("application/json")
 	@Consumes("application/json")
 	public void saveComentario(Comentario comentario) throws Exception {
+		comentario.setDataComentario(new Date());
 		bc.saveComentario(comentario);
 	}
 

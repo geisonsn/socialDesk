@@ -106,7 +106,7 @@ public class ComentarioREST {
 	@Path("idChamado/{idChamado}")
 	@Produces("application/json")
 	public List<Comentario> listarComentarios(@PathParam("idChamado") Long idChamado) throws Exception {
-		List<Comentario> result = bc.listarComentarios(idChamado);
+		List<Comentario> result = bc.listarComentariosUsuario(idChamado);
 
 		if (result == null) {
 			throw new NotFoundException();

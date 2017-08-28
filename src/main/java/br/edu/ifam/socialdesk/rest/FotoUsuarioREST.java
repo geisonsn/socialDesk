@@ -19,13 +19,14 @@ import javax.ws.rs.core.UriInfo;
 
 import br.edu.ifam.socialdesk.business.FotoUsuarioBC;
 import br.edu.ifam.socialdesk.domain.FotoUsuario;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.gov.frameworkdemoiselle.BadRequestException;
 import br.gov.frameworkdemoiselle.NotFoundException;
 import br.gov.frameworkdemoiselle.transaction.Transactional;
 import br.gov.frameworkdemoiselle.util.Strings;
 import br.gov.frameworkdemoiselle.util.ValidatePayload;
 
-@Path("/fotoUsuarios")
+@Path("/fotoUsuario")
 public class FotoUsuarioREST {
 
 	@Inject
@@ -45,6 +46,21 @@ public class FotoUsuarioREST {
 		return result;
 	}
 
+	@GET
+	@Produces("application/json")
+	@Path("getByUsuario/{idUsuario}")
+	public FotoUsuario getByUsuario(@PathParam("idUsuario") Long idUsuario) throws Exception {
+		FotoUsuario fotoUsuario;
+		fotoUsuario = bc.getByUsuario(idUsuario);
+		return fotoUsuario;
+	}
+	
+	/*
+	public FotoUsuario getByUsuario(Long idUsuario) {
+		return getDelegate().getByUsuario(idUsuario);
+	}
+	
+	*/
 	@GET
 	@Path("{id}")
 	@Produces("application/json")

@@ -43,12 +43,12 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 
 	public List<ChamadoListaDTO> find() throws IOException {
 		List<ChamadoListaDTO> result = new ArrayList<>();
-		List<Chamado> listChamado = this.getDelegate().findAll();
+		List<Chamado> listChamado = this.getDelegate().find("");
 		for (Chamado chamado : listChamado) {
 			 Long nrComentarios = this.comentarioBC.contarComentarios(chamado.getId());
 			 
 			 List<ArquivoChamado> arquivos = this.arquivoChamadoBC.findPorChamado(chamado.getId());
-			 List<Comentario> comentarios = this.comentarioBC.listarComentarios(chamado.getId());
+			 List<Comentario> comentarios = this.comentarioBC.listarComentariosUsuario(chamado.getId());
 			 
 			 FotoUsuario foto = this.fotoUsuarioBC.getByUsuario(chamado.getUsuario().getId());
 			 

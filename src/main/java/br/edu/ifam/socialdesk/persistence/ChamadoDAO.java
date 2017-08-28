@@ -15,7 +15,7 @@ public class ChamadoDAO extends GenericDAO<Chamado, Long> {
 
 	public List<Chamado> find(String query) {
 
-		final String hql = "select u from Chamado u where u.descricao like :descricao";
+		final String hql = "select u from Chamado u where u.descricao like :descricao order by u.dataCriacao desc";
 
 		TypedQuery<Chamado> createQuery = getEntityManager().createQuery(hql, Chamado.class);
 		createQuery.setParameter("descricao", "%" + query + "%");
