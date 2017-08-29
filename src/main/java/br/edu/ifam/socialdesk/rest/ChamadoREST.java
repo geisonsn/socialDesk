@@ -24,6 +24,7 @@ import br.edu.ifam.socialdesk.business.ChamadoBC;
 import br.edu.ifam.socialdesk.domain.ArquivoChamado;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoAuxDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.gov.frameworkdemoiselle.BadRequestException;
@@ -58,13 +59,13 @@ public class ChamadoREST {
 
 		return result;
 	}
-	
+
 	@GET
 	@Path("comComentarios/{id}")
 	@Produces("application/json")
-	public Chamado loadComComentarios(@PathParam("id") Long id) throws Exception {
-		//TODO Retornar dto de Chamado com listComentarios
-		Chamado result = bc.load(id);
+	public ChamadoAuxDTO loadComComentarios(@PathParam("id") Long id) throws Exception {
+
+		ChamadoAuxDTO result = bc.loadComComentario(id);
 
 		if (result == null) {
 			throw new NotFoundException();
@@ -110,10 +111,12 @@ public class ChamadoREST {
 	@Consumes("application/json")
 	public void update(@PathParam("id") Long id, Chamado body) throws Exception {
 		checkId(body);
-		load(id);
+		Chamado update = load(id);
 
-		body.setId(id);
-		bc.update(body);
+		update.setDescricao(body.getDescricao());
+		update.setCategoria(body.getCategoria());
+
+		bc.update(update);
 	}
 
 	@PUT

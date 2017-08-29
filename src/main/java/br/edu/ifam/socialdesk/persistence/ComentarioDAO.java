@@ -45,17 +45,16 @@ public class ComentarioDAO extends GenericDAO<Comentario, Long> {
 
 		return createQuery.getResultList();
 	}
-	
+
 	public List<Comentario> listarComentariosUsuario(Long idChamado) {
-		System.out.println("-- listarComentariosUsuario -- ");
-		final String hql = "select new Comentario(c.id, c.descricao, c.usuario.nomeUsuario) from Comentario c where c.chamado.id = :idChamado";
+
+		final String hql = "select new Comentario(comentario.id, comentario.descricao, comentario.dataComentario, comentario.usuario.nomeUsuario, fotoUsuario.foto) "
+				+ " from Comentario comentario, FotoUsuario fotoUsuario where comentario.chamado.id = :idChamado and (fotoUsuario.usuario.id = comentario.usuario.id or fotoUsuario.usuario is null ) ORDER BY comentario.id DESC";
 
 		TypedQuery<Comentario> createQuery = getEntityManager().createQuery(hql, Comentario.class);
 		createQuery.setParameter("idChamado", idChamado);
 
 		return createQuery.getResultList();
 	}
-	
-	
 
 }

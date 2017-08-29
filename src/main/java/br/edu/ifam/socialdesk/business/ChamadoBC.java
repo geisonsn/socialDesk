@@ -13,6 +13,7 @@ import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
 import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Status;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoAuxDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.edu.ifam.socialdesk.exception.BusinessException;
 import br.edu.ifam.socialdesk.persistence.ChamadoDAO;
@@ -28,7 +29,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 
 	@Inject
 	private ArquivoChamadoBC arquivoChamadoBC;
-	
+
 	@Inject
 	private FotoUsuarioBC fotoUsuarioBC;
 
@@ -45,20 +46,24 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listChamado = this.getDelegate().find("");
 		for (Chamado chamado : listChamado) {
-			 Long nrComentarios = this.comentarioBC.contarComentarios(chamado.getId());
-			 
-			 List<ArquivoChamado> arquivos = this.arquivoChamadoBC.findPorChamado(chamado.getId());
-			 List<Comentario> comentarios = this.comentarioBC.listarComentariosUsuario(chamado.getId());
-			 
-			 FotoUsuario foto = this.fotoUsuarioBC.getByUsuario(chamado.getUsuario().getId());
-			 
-			result.add(new ChamadoListaDTO(chamado,nrComentarios,arquivos,comentarios,foto));
-		/*	result.add(new ChamadoListaDTO(chamado,
-				 	this.comentarioBC.contarComentarios(chamado.getId()),
-				 	"img/apple.jpg"));*/
+			Long nrComentarios = this.comentarioBC.contarComentarios(chamado.getId());
+
+			List<ArquivoChamado> arquivos = this.arquivoChamadoBC.findPorChamado(chamado.getId());
+			List<Comentario> comentarios = this.comentarioBC.listarComentariosUsuario(chamado.getId());
+			FotoUsuario foto = this.fotoUsuarioBC.getByUsuario(chamado.getUsuario().getId());
+
+			result.add(new ChamadoListaDTO(chamado, nrComentarios, arquivos, comentarios, foto));
+
 		}
 
 		return result;
+	}
+
+	public ChamadoAuxDTO loadComComentario(Long idChamado) throws IOException {
+		Chamado chamado = this.getDelegate().load(idChamado);
+		List<Comentario> listComentario = this.comentarioBC.listarComentariosUsuario(chamado.getId());
+		ChamadoAuxDTO chamadoAuxDTO = new ChamadoAuxDTO(chamado, listComentario);
+		return chamadoAuxDTO;
 	}
 
 	/**
@@ -179,7 +184,13 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	 */
 	public void updateQtdeLike(Chamado chamado) {
 		Chamado chamadoBanco = this.load(chamado.getId());
-		Long qtdeLikeAtualizada = chamadoBanco.getQuantidadeCurtida() + 1;
+		Long qtdeLikeAtualizada = (long) 0;
+		if (chamadoBanco.getQuantidadeCurtida() == null) {
+			qtdeLikeAtualizada = 1L;
+		} else {
+			qtdeLikeAtualizada = chamadoBanco.getQuantidadeCurtida() + 1;
+		}
+
 		chamadoBanco.setQuantidadeCurtida(qtdeLikeAtualizada);
 		getDelegate().update(chamadoBanco);
 
