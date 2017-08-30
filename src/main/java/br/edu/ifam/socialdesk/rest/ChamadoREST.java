@@ -174,11 +174,12 @@ public class ChamadoREST {
 		return result;
 	}
 
+	// by Rosangela
 	@GET
 	@Produces("application/json")
 	@Path("listPorNomeUsuario/{nomeUsuario}")
-	public List<Chamado> listPorNomeUsuario(@PathParam("nomeUsuario") String nomeUsuario) throws Exception {
-		List<Chamado> result;
+	public List<ChamadoListaDTO> listPorNomeUsuario(@PathParam("nomeUsuario") String nomeUsuario) throws Exception {
+		List<ChamadoListaDTO> result;
 		result = bc.listPorNomeUsuario(nomeUsuario);
 		return result;
 	}

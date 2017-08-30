@@ -43,8 +43,14 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	}
 
 	public List<ChamadoListaDTO> find() throws IOException {
-		List<ChamadoListaDTO> result = new ArrayList<>();
 		List<Chamado> listChamado = this.getDelegate().find("");
+
+		return buildListaChamado(listChamado);
+	}
+
+	private List<ChamadoListaDTO> buildListaChamado(List<Chamado> listChamado) throws IOException {
+		List<ChamadoListaDTO> result = new ArrayList<>();
+
 		for (Chamado chamado : listChamado) {
 			Long nrComentarios = this.comentarioBC.contarComentarios(chamado.getId());
 
@@ -103,9 +109,12 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	 * Listar chamados por nome de usuário
 	 * 
 	 * @param nomeUsuario
+	 * @throws IOException
 	 */
-	public List<Chamado> listPorNomeUsuario(String nomeUsuario) {
-		return getDelegate().listPorNomeUsuario(nomeUsuario);
+	public List<ChamadoListaDTO> listPorNomeUsuario(String nomeUsuario) throws IOException {
+		List<Chamado> result = getDelegate().listPorNomeUsuario(nomeUsuario);
+
+		return buildListaChamado(result);
 	}
 
 	/**
@@ -117,7 +126,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	public void excluirChamado(Long idChamado) throws BusinessException {
 		Long qtdeComentarios = comentarioBC.contarComentarios(idChamado);
 		if (qtdeComentarios > 1) {
-			throw new BusinessException("Não é possível excluir o chamado por possuir comentarios.");
+			throw new BusinessException("Não é possível excluir o chamado por possuir comentários.");
 		}
 
 		// arquivoChamadoBC.deletePorChamado(idChamado);
