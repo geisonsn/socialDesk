@@ -12,6 +12,10 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * @Inject private FotoUsuarioBC fotoUsuarioBC;
+	 */
+
 	/**
 	 * Lista usuários
 	 * 
@@ -48,6 +52,7 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 		} else {
 			id = getDelegate().update(usuario).getId();
 		}
+		System.out.println("idUsuario" + usuario.getId());
 
 		return id;
 	}

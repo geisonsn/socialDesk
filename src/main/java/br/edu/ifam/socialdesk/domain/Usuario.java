@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.edu.ifam.socialdesk.domain.enums.Sexo;
 
@@ -47,6 +48,31 @@ public class Usuario implements Serializable {
 
 	@Column(name = "DATANASCIMENTO")
 	private Date dataNascimento;
+
+	@Transient
+	private String fotoUsuarioBase64;
+
+	/*
+	 * @Transient private byte[] foto;
+	 */
+
+	public String getFotoUsuarioBase64() {
+		return fotoUsuarioBase64;
+	}
+
+	public void setFotoUsuarioBase64(String fotoUsuarioBase64) {
+		this.fotoUsuarioBase64 = fotoUsuarioBase64;
+	}
+
+	public Usuario(String nomeUsuario, String sobrenome, String email, Sexo sexo, String senha, Date dataNascimento) {
+		super();
+		this.nomeUsuario = nomeUsuario;
+		this.sobrenome = sobrenome;
+		this.email = email;
+		this.sexo = sexo;
+		this.senha = senha;
+		this.dataNascimento = dataNascimento;
+	}
 
 	public Long getId() {
 		return id;
@@ -103,5 +129,15 @@ public class Usuario implements Serializable {
 	public void setDataNascimento(Date dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
+
+	/*
+	 * public byte[] getFoto() { return foto; }
+	 * 
+	 * public void setFoto(byte[] foto) { this.foto = foto; }
+	 * 
+	 * public String getFotoBase64() throws IOException { if (foto != null) {
+	 * String imagemReduzida = UtilDomain.redimensionaImagem(foto, 100, 100,
+	 * "jpg"); return imagemReduzida; } return null; }
+	 */
 
 }

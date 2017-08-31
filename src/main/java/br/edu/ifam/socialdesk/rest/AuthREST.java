@@ -44,6 +44,13 @@ public class AuthREST {
 		securityContext.logout();
 	}
 
+	@POST
+	@Path("cadastro")
+	@Consumes("application/json")
+	@Produces("application/json")
+	public void cadastro(CredentialsBody body) {
+	}
+
 	public static class CredentialsBody {
 
 		@NotNull(message = "{required.field}")

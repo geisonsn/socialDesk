@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import javax.inject.Inject;
 
+import br.edu.ifam.socialdesk.business.FotoUsuarioBC;
 import br.edu.ifam.socialdesk.business.UsuarioBC;
 import br.edu.ifam.socialdesk.domain.Usuario;
 import br.gov.frameworkdemoiselle.security.Credentials;
@@ -16,6 +17,9 @@ public class AppAuthenticator extends TokenAuthenticator {
 	@Inject
 	private UsuarioBC usuarioBC;
 
+	@Inject
+	private FotoUsuarioBC fotoUsuarioBC;
+
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -25,6 +29,7 @@ public class AppAuthenticator extends TokenAuthenticator {
 		String password = credentials.getPassword();
 
 		final Usuario usuario = usuarioBC.login(username, password);
+		final String fotoBase64 = this.fotoUsuarioBC.getByUsuario(usuario.getId()).getFotoBase64();
 
 		if (usuario == null) {
 			throw new InvalidCredentialsException();
@@ -44,6 +49,11 @@ public class AppAuthenticator extends TokenAuthenticator {
 			@SuppressWarnings("unused")
 			public Long getId() {
 				return usuario.getId();
+			}
+
+			@SuppressWarnings("unused")
+			public String getFotoUsuarioBase64() {
+				return fotoBase64;
 			}
 
 			@Override

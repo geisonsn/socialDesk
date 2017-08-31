@@ -17,8 +17,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.jboss.resteasy.util.Base64;
+
+import br.edu.ifam.socialdesk.business.FotoUsuarioBC;
 import br.edu.ifam.socialdesk.business.UsuarioBC;
+import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Usuario;
+import br.edu.ifam.socialdesk.domain.dto.UsuarioCadastroDTO;
 import br.edu.ifam.socialdesk.domain.dto.UsuarioDTO;
 import br.gov.frameworkdemoiselle.BadRequestException;
 import br.gov.frameworkdemoiselle.NotFoundException;
@@ -30,6 +35,11 @@ public class UsuarioREST {
 
 	@Inject
 	private UsuarioBC bc;
+
+	@Inject
+	private FotoUsuarioBC fotoUsuarioBC;
+
+	// TODO Criar método getByNome que retorna um Usuario com foto
 
 	@GET
 	@Produces("application/json")
@@ -48,7 +58,7 @@ public class UsuarioREST {
 	@POST
 	@Produces("application/json")
 	@Path("login")
-	public Response login(UsuarioDTO usuarioRequest) {
+	public Response login(UsuarioDTO usuarioRequest) throws Exception {
 		Usuario usuario = bc.login(usuarioRequest.getEmail(), usuarioRequest.getSenha());
 		if (usuario == null) {
 			return Response.status(404).build();
@@ -74,9 +84,22 @@ public class UsuarioREST {
 	@ValidatePayload
 	@Produces("application/json")
 	@Consumes("application/json")
-	public Response save(Usuario usuario, @Context UriInfo uriInfo) throws Exception {
+	public Response save(UsuarioCadastroDTO usuarioCadastroDTO, @Context UriInfo uriInfo) throws Exception {
+
+		Usuario usuario = new Usuario(usuarioCadastroDTO.getNomeUsuario(), usuarioCadastroDTO.getSobrenome(),
+				usuarioCadastroDTO.getEmail(), usuarioCadastroDTO.getSexo(), usuarioCadastroDTO.getSenha(),
+				usuarioCadastroDTO.getDataNascimento());
 		Long id = bc.save(usuario);
 		URI location = uriInfo.getRequestUriBuilder().path(id.toString()).build();
+
+		Usuario usuarioAtualizado = bc.load(id);
+
+		if (usuarioCadastroDTO.getFoto() != null) {
+			FotoUsuario foto = new FotoUsuario();
+			foto.setUsuario(usuarioAtualizado);
+			foto.setFoto(Base64.decode(usuarioCadastroDTO.getFoto()));
+			fotoUsuarioBC.insert(foto);
+		}
 
 		return Response.created(location).entity(id).build();
 	}
