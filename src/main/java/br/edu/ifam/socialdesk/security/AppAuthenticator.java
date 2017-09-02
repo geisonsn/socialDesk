@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import br.edu.ifam.socialdesk.business.FotoUsuarioBC;
 import br.edu.ifam.socialdesk.business.UsuarioBC;
+import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Usuario;
 import br.gov.frameworkdemoiselle.security.Credentials;
 import br.gov.frameworkdemoiselle.security.InvalidCredentialsException;
@@ -29,11 +30,13 @@ public class AppAuthenticator extends TokenAuthenticator {
 		String password = credentials.getPassword();
 
 		final Usuario usuario = usuarioBC.login(username, password);
-		final String fotoBase64 = this.fotoUsuarioBC.getByUsuario(usuario.getId()).getFotoBase64();
 
 		if (usuario == null) {
 			throw new InvalidCredentialsException();
 		}
+		
+		FotoUsuario fotoUsuario = this.fotoUsuarioBC.getByUsuario(usuario.getId());
+		final String fotoBase64 = fotoUsuario != null ? fotoUsuario.getFotoBase64() : null;
 
 		return new Principal() {
 			@SuppressWarnings("unused")
