@@ -13,9 +13,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.codec.binary.Base64;
-
-import br.edu.ifam.socialdesk.util.ImagemUtil;
 import br.edu.ifam.socialdesk.util.UtilDomain;
 
 @Entity

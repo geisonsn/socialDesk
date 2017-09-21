@@ -1,6 +1,5 @@
 package br.edu.ifam.socialdesk.rest;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
@@ -13,21 +12,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
-import org.jboss.resteasy.util.Base64;
-
-import br.edu.ifam.socialdesk.business.ArquivoChamadoBC;
 import br.edu.ifam.socialdesk.business.ChamadoBC;
-import br.edu.ifam.socialdesk.domain.ArquivoChamado;
 import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoAuxDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
-import br.gov.frameworkdemoiselle.BadRequestException;
 import br.gov.frameworkdemoiselle.NotFoundException;
 import br.gov.frameworkdemoiselle.transaction.Transactional;
 import br.gov.frameworkdemoiselle.util.ValidatePayload;
@@ -37,9 +30,6 @@ public class ChamadoREST {
 
 	@Inject
 	private ChamadoBC bc;
-
-	@Inject
-	private ArquivoChamadoBC arquivoChamadoBC;
 
 	@GET
 	@Produces("application/json")
@@ -75,50 +65,20 @@ public class ChamadoREST {
 	}
 
 	@POST
-	@Transactional
 	@ValidatePayload
 	@Produces("application/json")
 	@Consumes("application/json")
-	public Response save(ChamadoDTO form, @Context UriInfo uriInfo) throws Exception {
-		Long id = bc.save(form.getChamado());
-
-		Chamado chamado = bc.load(id);
-
-		if (form.getFoto() != null) {
-			ArquivoChamado arquivo = new ArquivoChamado();
-			arquivo.setChamado(chamado);
-			arquivo.setFoto(Base64.decode(form.getFoto()));
-			arquivoChamadoBC.insert(arquivo);
+	public Response save(ChamadoDTO form) throws Exception {
+		
+		Chamado chamado = bc.salvarChamado(form);
+		
+		if (form.getIdChamado() == null) {
+			return Response.status(Status.CREATED).entity(chamado.getId()).build();
 		}
-
-		URI location = uriInfo.getRequestUriBuilder().path(id.toString()).build();
-
-		return Response.created(location).entity(id).build();
+		
+		return Response.status(Status.NO_CONTENT).build();
 	}
-
-	private void checkId(Chamado body) throws BadRequestException {
-		if (body.getId() != null) {
-			throw new BadRequestException();
-		}
-	}
-
-	@PUT
-	// @LoggedIn
-	@Path("{id}")
-	@Transactional
-	@ValidatePayload
-	@Produces("application/json")
-	@Consumes("application/json")
-	public void update(@PathParam("id") Long id, Chamado body) throws Exception {
-		checkId(body);
-		Chamado update = load(id);
-
-		update.setDescricao(body.getDescricao());
-		update.setCategoria(body.getCategoria());
-
-		bc.update(update);
-	}
-
+	
 	@PUT
 	// @LoggedIn
 	@Path("atualizaQtdeLike")

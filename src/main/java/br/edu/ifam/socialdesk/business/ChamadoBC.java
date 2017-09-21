@@ -14,6 +14,7 @@ import br.edu.ifam.socialdesk.domain.Comentario;
 import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Status;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoAuxDTO;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
 import br.edu.ifam.socialdesk.exception.BusinessException;
 import br.edu.ifam.socialdesk.persistence.ChamadoDAO;
@@ -155,23 +156,32 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	}
 
 	/**
-	 * Salvar o chamado
-	 * 
-	 * @param idChamado
+	 * Salva as informações do chamado
+	 * @param form
+	 * @return
 	 */
-	public Long save(Chamado chamado) {
-		Long id = null;
-
-		if (chamado.getId() == null) {
+	@Transactional
+	public Chamado salvarChamado(ChamadoDTO form) {
+		
+		Chamado payload = form.getChamado();
+		
+		if (form.getIdChamado() == null) {
 			Status status = statusBC.getPorSigla(Constants.STATUS_ABERTO);
-			chamado.setStatus(status);
-			chamado.setDataCriacao(new Date());
-			id = getDelegate().insert(chamado).getId();
+			payload.setStatus(status);
+			payload.setDataCriacao(new Date());
+			getDelegate().insert(payload);
 		} else {
-			id = getDelegate().update(chamado).getId();
+			Chamado chamado = this.load(form.getIdChamado());
+			chamado.setCategoria(payload.getCategoria());
+			chamado.setDescricao(form.getDescricao());
+			getDelegate().update(chamado);
+			payload = chamado;
 		}
-
-		return id;
+		
+		
+		arquivoChamadoBC.salvarArquivo(form.getFoto(), payload);
+		
+		return payload;
 	}
 
 	/**
