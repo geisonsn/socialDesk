@@ -58,10 +58,13 @@ public class FotoUsuario implements Serializable {
 		return foto;
 	}
 
-	public String getFotoBase64() throws IOException {
+	public String getFotoBase64() {
 		if (foto != null) {
-			String imagemReduzida = UtilDomain.redimensionaImagem(foto, 100, 100, "jpg");
-			return imagemReduzida;
+			try {
+				String imagemReduzida = UtilDomain.redimensionaImagem(foto, 100, 100, "jpg");
+				return imagemReduzida;
+			} catch (IOException e) {
+			}
 		}
 		return null;
 	}

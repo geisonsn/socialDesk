@@ -19,6 +19,7 @@ import javax.ws.rs.core.UriInfo;
 
 import br.edu.ifam.socialdesk.business.ComentarioBC;
 import br.edu.ifam.socialdesk.domain.Comentario;
+import br.edu.ifam.socialdesk.domain.dto.ComentarioDTO;
 import br.gov.frameworkdemoiselle.BadRequestException;
 import br.gov.frameworkdemoiselle.NotFoundException;
 import br.gov.frameworkdemoiselle.transaction.Transactional;
@@ -102,9 +103,10 @@ public class ComentarioREST {
 		bc.delete(id);
 	}
 
-	@GET
+	/*@GET
 	@Path("idChamado/{idChamado}")
 	@Produces("application/json")
+	@Deprecated
 	public List<Comentario> listarComentarios(@PathParam("idChamado") Long idChamado) throws Exception {
 		List<Comentario> result = bc.listarComentariosUsuario(idChamado);
 
@@ -112,6 +114,19 @@ public class ComentarioREST {
 			throw new NotFoundException();
 		}
 
+		return result;
+	}*/
+	
+	@GET
+	@Path("idChamado/{idChamado}")
+	@Produces("application/json")
+	public List<ComentarioDTO> listar(@PathParam("idChamado") Long idChamado) throws Exception {
+		List<ComentarioDTO> result = bc.listar(idChamado);
+		
+		if (result == null) {
+			throw new NotFoundException();
+		}
+		
 		return result;
 	}
 

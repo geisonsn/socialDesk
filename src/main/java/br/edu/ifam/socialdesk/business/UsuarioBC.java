@@ -2,8 +2,14 @@ package br.edu.ifam.socialdesk.business;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import br.edu.ifam.socialdesk.domain.Chamado;
+import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Usuario;
+import br.edu.ifam.socialdesk.domain.dto.UsuarioDTO;
 import br.edu.ifam.socialdesk.persistence.UsuarioDAO;
+import br.edu.ifam.socialdesk.util.ModelMapperUtil;
 import br.gov.frameworkdemoiselle.stereotype.BusinessController;
 import br.gov.frameworkdemoiselle.template.DelegateCrud;
 
@@ -12,9 +18,8 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 
 	private static final long serialVersionUID = 1L;
 
-	/*
-	 * @Inject private FotoUsuarioBC fotoUsuarioBC;
-	 */
+	@Inject 
+	private FotoUsuarioBC fotoUsuarioBC;
 
 	/**
 	 * Lista usuários
@@ -55,6 +60,15 @@ public class UsuarioBC extends DelegateCrud<Usuario, Long, UsuarioDAO> {
 		System.out.println("idUsuario" + usuario.getId());
 
 		return id;
+	}
+	
+	public UsuarioDTO toUsuarioDTO(Usuario source) {
+		UsuarioDTO usuario = ModelMapperUtil.map(source, UsuarioDTO.class, null);
+		FotoUsuario fotoUsuario = fotoUsuarioBC.getByUsuario(usuario.getId());
+		if (fotoUsuario != null) {
+			usuario.setFoto(fotoUsuario.getFotoBase64());
+		}
+		return usuario;
 	}
 
 }

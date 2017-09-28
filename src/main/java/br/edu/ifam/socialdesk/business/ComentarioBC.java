@@ -1,9 +1,14 @@
 package br.edu.ifam.socialdesk.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import br.edu.ifam.socialdesk.domain.Comentario;
+import br.edu.ifam.socialdesk.domain.dto.ComentarioDTO;
 import br.edu.ifam.socialdesk.persistence.ComentarioDAO;
+import br.edu.ifam.socialdesk.util.Data;
 import br.gov.frameworkdemoiselle.stereotype.BusinessController;
 import br.gov.frameworkdemoiselle.template.DelegateCrud;
 
@@ -11,6 +16,9 @@ import br.gov.frameworkdemoiselle.template.DelegateCrud;
 public class ComentarioBC extends DelegateCrud<Comentario, Long, ComentarioDAO> {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Inject
+	private UsuarioBC usuarioBC;
 
 	public List<Comentario> find(String query) {
 		return getDelegate().find(query);
@@ -53,6 +61,20 @@ public class ComentarioBC extends DelegateCrud<Comentario, Long, ComentarioDAO> 
 	 */
 	public List<Comentario> listarComentarios(Long idChamado) {
 		return getDelegate().listarComentarios(idChamado);
+	}
+	
+	public List<ComentarioDTO> listar(Long idChamado) {
+		List<Comentario> comentarios = getDelegate().listarComentarios(idChamado);
+		List<ComentarioDTO> list = new ArrayList<>();
+		for (Comentario c : comentarios) {
+			ComentarioDTO comentario = new ComentarioDTO();
+			comentario.setId(c.getId());
+			comentario.setComentario(c.getDescricao());
+			comentario.setUsuario(usuarioBC.toUsuarioDTO(c.getUsuario()));
+			comentario.setData(Data.format(c.getDataComentario(), Data.DatePattern.DD_MM_YYYY_HH_mm_ss_FORMATTED1));
+			list.add(comentario);
+		}
+		return list;
 	}
 	
 	public List<Comentario> listarComentariosUsuario(Long idChamado) {

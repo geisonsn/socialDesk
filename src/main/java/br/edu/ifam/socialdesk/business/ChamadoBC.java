@@ -13,11 +13,15 @@ import br.edu.ifam.socialdesk.domain.Chamado;
 import br.edu.ifam.socialdesk.domain.Comentario;
 import br.edu.ifam.socialdesk.domain.FotoUsuario;
 import br.edu.ifam.socialdesk.domain.Status;
+import br.edu.ifam.socialdesk.domain.dto.CategoriaDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoAuxDTO;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoDTO2;
 import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO;
+import br.edu.ifam.socialdesk.domain.dto.ChamadoListaDTO2;
 import br.edu.ifam.socialdesk.exception.BusinessException;
 import br.edu.ifam.socialdesk.persistence.ChamadoDAO;
+import br.edu.ifam.socialdesk.util.Data;
 import br.gov.frameworkdemoiselle.stereotype.BusinessController;
 import br.gov.frameworkdemoiselle.template.DelegateCrud;
 import br.gov.frameworkdemoiselle.transaction.Transactional;
@@ -30,6 +34,9 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 
 	@Inject
 	private ArquivoChamadoBC arquivoChamadoBC;
+	
+	@Inject
+	private UsuarioBC usuarioBC;
 
 	@Inject
 	private FotoUsuarioBC fotoUsuarioBC;
@@ -64,6 +71,31 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 		}
 
 		return result;
+	}
+	
+	public ChamadoDTO2 get(Long idChamado)  {
+		Chamado chamado  = getDelegate().load(idChamado);
+		ChamadoDTO2 c = new ChamadoDTO2();
+		
+		c.setIdChamado(chamado.getId());
+		c.setDescricao(chamado.getDescricao());
+		c.setStatus(chamado.getStatus().getDescricao());
+		c.setData(Data.format(chamado.getDataCriacao(), Data.DatePattern.DD_MM_YYYY_HH_mm_ss_FORMATTED1));
+		c.setCategoria(new CategoriaDTO());
+		c.getCategoria().setId(chamado.getCategoria().getId());
+		c.getCategoria().setDescricao(chamado.getCategoria().getNomecategoria());
+		c.setUsuario(usuarioBC.toUsuarioDTO(chamado.getUsuario()));
+//		c.setComentarios(this.comentarioBC.contarComentarios(chamado.getId()).intValue());
+//		c.setCurtidas(chamado.getQuantidadeCurtida() != null ? chamado.getQuantidadeCurtida().intValue() : 0);
+		ArquivoChamado arquivoChamado = arquivoChamadoBC.getPorChamado(chamado.getId());
+		if (arquivoChamado != null) {
+			try {
+				c.setImagem(arquivoChamado.getFotoBase64());
+			} catch (IOException e) {
+			}
+		}
+		
+		return c;
 	}
 
 	public ChamadoAuxDTO loadComComentario(Long idChamado) throws IOException {
@@ -112,10 +144,44 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	 * @param nomeUsuario
 	 * @throws IOException
 	 */
-	public List<ChamadoListaDTO> listPorNomeUsuario(String nomeUsuario) throws IOException {
+	public List<ChamadoListaDTO2> listPorNomeUsuario(String nomeUsuario) throws IOException {
 		List<Chamado> result = getDelegate().listPorNomeUsuario(nomeUsuario);
+		return build(result);
+	}
+	
+	/**
+	 * Listar chamados por nome de usuário
+	 * 
+	 * @param nomeUsuario
+	 * @throws IOException
+	 */
+	public List<ChamadoListaDTO2> list() throws IOException {
+		List<Chamado> chamados = getDelegate().list();
+		return build(chamados);
+	}
 
-		return buildListaChamado(result);
+	private List<ChamadoListaDTO2> build(List<Chamado> chamados)
+			throws IOException {
+		List<ChamadoListaDTO2> list = new ArrayList<>();
+		for (Chamado chamado : chamados) {
+			ChamadoListaDTO2 chamadoList = new ChamadoListaDTO2();
+			chamadoList.setIdChamado(chamado.getId());
+			chamadoList.setDescricao(chamado.getDescricao());
+			chamadoList.setStatus(chamado.getStatus().getDescricao());
+			chamadoList.setData(Data.format(chamado.getDataCriacao(), Data.DatePattern.DD_MM_YYYY_HH_mm_ss_FORMATTED1));
+			chamadoList.setCategoria(new CategoriaDTO());
+			chamadoList.getCategoria().setId(chamado.getCategoria().getId());
+			chamadoList.getCategoria().setDescricao(chamado.getCategoria().getNomecategoria());
+			chamadoList.setUsuario(usuarioBC.toUsuarioDTO(chamado.getUsuario()));
+			chamadoList.setComentarios(this.comentarioBC.contarComentarios(chamado.getId()).intValue());
+			chamadoList.setCurtidas(chamado.getQuantidadeCurtida() != null ? chamado.getQuantidadeCurtida().intValue() : 0);
+			ArquivoChamado arquivoChamado = arquivoChamadoBC.getPorChamado(chamado.getId());
+			if (arquivoChamado != null) {
+				chamadoList.setImagem(arquivoChamado.getFotoBase64());
+			}
+			list.add(chamadoList);
+		}
+		return list;
 	}
 
 	/**
@@ -130,7 +196,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 			throw new BusinessException("Não é possível excluir o chamado por possuir comentários.");
 		}
 
-		// arquivoChamadoBC.deletePorChamado(idChamado);
+		arquivoChamadoBC.deletePorChamado(idChamado);
 
 		this.delete(idChamado);
 	}
@@ -145,7 +211,7 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	public void fecharChamado(Long idChamado) throws BusinessException {
 		Long qtdeComentarios = comentarioBC.contarComentarios(idChamado);
 		if (qtdeComentarios < 1) {
-			throw new BusinessException("Não é possível fechar o chamado,pois ainda não está em atendimento");
+			throw new BusinessException("Não é possível fechar o chamado, pois ainda não está em atendimento");
 		}
 
 		Chamado chamado = load(idChamado);
@@ -201,17 +267,11 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	 * 
 	 * @param chamado
 	 */
-	public void updateQtdeLike(Chamado chamado) {
-		Chamado chamadoBanco = this.load(chamado.getId());
-		Long qtdeLikeAtualizada = (long) 0;
-		if (chamadoBanco.getQuantidadeCurtida() == null) {
-			qtdeLikeAtualizada = 1L;
-		} else {
-			qtdeLikeAtualizada = chamadoBanco.getQuantidadeCurtida() + 1;
-		}
-
-		chamadoBanco.setQuantidadeCurtida(qtdeLikeAtualizada);
-		getDelegate().update(chamadoBanco);
-
+	public void curtir(Long idChamado) {
+		Chamado chamado = this.load(idChamado);
+		Long curtidas = chamado.getQuantidadeCurtida();
+		Long total = curtidas == null ? 1l : curtidas + 1l;
+		chamado.setQuantidadeCurtida(total);
+		getDelegate().update(chamado);
 	}
 }

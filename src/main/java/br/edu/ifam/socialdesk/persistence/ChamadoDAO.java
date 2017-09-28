@@ -49,14 +49,21 @@ public class ChamadoDAO extends GenericDAO<Chamado, Long> {
 
 	public List<Chamado> listPorNomeUsuario(String nomeUsuario) {
 
-		final String hql = "SELECT chamado FROM Chamado chamado WHERE chamado.status.siglaStatus = :statusAberto "
-				+ " AND chamado.usuario.nomeUsuario like :nomeUsuario ORDER BY chamado.dataCriacao ";
+		final String hql = "SELECT chamado FROM Chamado chamado WHERE "
+				+ " chamado.usuario.nomeUsuario like :nomeUsuario ORDER BY chamado.dataCriacao DESC";
 
 		TypedQuery<Chamado> createQuery = getEntityManager().createQuery(hql, Chamado.class);
-		createQuery.setParameter("statusAberto", Constants.STATUS_ABERTO);
 		createQuery.setParameter("nomeUsuario", "%" + nomeUsuario + "%");
 
 		return createQuery.getResultList();
+	}
+	
+	public List<Chamado> list() {
+		String sql = new StringBuilder()
+			.append(" SELECT c FROM Chamado c ORDER BY c.dataCriacao DESC")
+			.toString();
+		return getEntityManager().createQuery(sql, Chamado.class)
+				.getResultList();
 	}
 
 }

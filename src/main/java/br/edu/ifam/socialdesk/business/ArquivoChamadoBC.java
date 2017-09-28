@@ -67,6 +67,5 @@ public class ArquivoChamadoBC extends DelegateCrud<ArquivoChamado, Long, Arquivo
 			delete(arquivoChamado.getId());
 		}
 
-		getDelegate().flush();
 	}
 }
