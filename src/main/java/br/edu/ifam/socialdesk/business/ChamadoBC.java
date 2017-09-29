@@ -125,17 +125,11 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 	 * Listar chamados por idUsuário
 	 * 
 	 * @param idUsuario
+	 * @throws IOException 
 	 */
-	public List<ChamadoListaDTO> listPorUsuario(Long idUsuario) {
-		List<ChamadoListaDTO> result = new ArrayList<>();
-		List<Chamado> listPorCategoria = getDelegate().listPorUsuario(idUsuario);
-		for (Chamado chamado : listPorCategoria) {
-			result.add(new ChamadoListaDTO(chamado, this.comentarioBC.contarComentarios(chamado.getId()),
-					"img/apple.jpg"));
-		}
-
-		return result;
-
+	public List<ChamadoListaDTO2> listPorUsuario(Long idUsuario) throws IOException {
+		List<Chamado> chamados = getDelegate().listPorUsuario(idUsuario);
+		return build(chamados);
 	}
 
 	/**

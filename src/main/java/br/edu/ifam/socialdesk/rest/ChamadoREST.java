@@ -149,8 +149,8 @@ public class ChamadoREST {
 	@GET
 	@Produces("application/json")
 	@Path("listPorUsuario/{idUsuario}")
-	public List<ChamadoListaDTO> listPorUsuario(@PathParam("idUsuario") Long idUsuario) throws Exception {
-		List<ChamadoListaDTO> result;
+	public List<ChamadoListaDTO2> listPorUsuario(@PathParam("idUsuario") Long idUsuario) throws Exception {
+		List<ChamadoListaDTO2> result;
 		result = bc.listPorUsuario(idUsuario);
 		return result;
 	}
