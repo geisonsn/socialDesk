@@ -162,7 +162,9 @@ public class ChamadoBC extends DelegateCrud<Chamado, Long, ChamadoDAO> {
 			chamadoList.setIdChamado(chamado.getId());
 			chamadoList.setDescricao(chamado.getDescricao());
 			chamadoList.setStatus(chamado.getStatus().getDescricao());
-			chamadoList.setData(Data.format(chamado.getDataCriacao(), Data.DatePattern.DD_MM_YYYY_HH_mm_ss_FORMATTED1));
+			if (chamado.getDataCriacao() != null) {
+				chamadoList.setData(Data.format(chamado.getDataCriacao(), Data.DatePattern.DD_MM_YYYY_HH_mm_ss_FORMATTED1));
+			}
 			chamadoList.setCategoria(new CategoriaDTO());
 			chamadoList.getCategoria().setId(chamado.getCategoria().getId());
 			chamadoList.getCategoria().setDescricao(chamado.getCategoria().getNomecategoria());
