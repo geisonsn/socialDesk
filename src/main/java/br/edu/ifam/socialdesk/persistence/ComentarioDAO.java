@@ -38,7 +38,7 @@ public class ComentarioDAO extends GenericDAO<Comentario, Long> {
 	 */
 	public List<Comentario> listarComentarios(Long idChamado) {
 
-		final String hql = "SELECT c FROM Comentario c WHERE c.chamado.id = :idChamado";
+		final String hql = "SELECT c FROM Comentario c WHERE c.chamado.id = :idChamado order by data_comentario desc";
 
 		TypedQuery<Comentario> createQuery = getEntityManager().createQuery(hql, Comentario.class);
 		createQuery.setParameter("idChamado", idChamado);

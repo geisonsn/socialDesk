@@ -38,7 +38,7 @@ public class ChamadoDAO extends GenericDAO<Chamado, Long> {
 	public List<Chamado> listPorUsuario(Long idUsuario) {
 
 		final String hql = "SELECT chamado FROM Chamado chamado WHERE chamado.status.siglaStatus = :statusAberto "
-				+ " AND chamado.usuario.id = :idUsuario ORDER BY chamado.dataCriacao ";
+				+ " AND chamado.usuario.id = :idUsuario ORDER BY chamado.dataCriacao DESC";
 
 		TypedQuery<Chamado> createQuery = getEntityManager().createQuery(hql, Chamado.class);
 		createQuery.setParameter("statusAberto", Constants.STATUS_ABERTO);
